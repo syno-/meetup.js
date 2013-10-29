@@ -1,7 +1,20 @@
-#
+##############
 # global
-#
+##############
 
 *.DS_Store
 Thumbs.db
+
+##############
+# Build tools
+##############
+node_modules
+
+
+##############
+# Build data
+##############
+
+main/js/meetup.*
+main/js/example.*
 
