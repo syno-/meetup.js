@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>WebRTC</title>
+
+        <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="/js/simplewebrtc.min.js"></script>
+        <script type="text/javascript" src="/js/meetup.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>WebRTC</h1>
+            <div>
+                <div class="row">
+                    <h2>会議</h2>
+                    <button id="btn-roomin">入室する</button>
+
+                    <video id="localVideo"></video>
+                    <div id="remoteVideos"></div>
+                </div>
+                <div class="row">
+                    <h2>参加者</h2>
+                    <ul id="list-attendances"></ul>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
