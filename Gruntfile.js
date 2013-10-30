@@ -42,7 +42,7 @@ module.exports = function(grunt) {
             scripts: {
                 files: [
                     buildPath + '**/*.js',
-                    buildPath + '**/*.css',
+                    buildPath + '**/*.scss',
                 ],
                 tasks: ['default'],
                 options: {

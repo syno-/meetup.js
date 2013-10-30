@@ -13,17 +13,18 @@
     <body>
         <div class="container">
             <h1>WebRTC</h1>
-            <div>
+            <div class="table">
                 <div class="row">
-                    <h2>会議</h2>
-                    <button id="btn-roomin">入室する</button>
-
-                    <video id="localVideo"></video>
+                    <h2>会議室 - (<span id="room-name"></span>)</h2>
+                    <p><img src="/img/loading.gif" alt="Loading..." />カメラへのアクセスを求めています…。</p>
                     <div id="remoteVideos"></div>
+                    <video id="localVideo"></video>
                 </div>
-                <div class="row">
+                <div class="row attendances">
                     <h2>参加者</h2>
-                    <ul id="list-attendances"></ul>
+                    <ul id="list-attendances">
+                        <li>まだ参加しているユーザが居ません。</li>
+                    </ul>
                 </div>
             </div>
         </div>
