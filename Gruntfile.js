@@ -40,23 +40,26 @@ module.exports = function(grunt) {
         },
         watch: {
             scripts: {
-                files: buildPath + '**/*.js',
+                files: [
+                    buildPath + '**/*.js',
+                    buildPath + '**/*.css',
+                ],
                 tasks: ['default'],
                 options: {
                     interrupt: true,
                 },
             },
         },
-//        sass: {
-//            dist: {
-//                options: {
-//                    style: 'expanded'
-//                },
-//                files: {
-//                    'main.css': 'main.scss',
-//                }
-//            }
-//        },
+        sass: {
+            dist: {
+                options: {
+                    style: 'expanded',
+                },
+                files: {
+                    './main/css/main.css': buildPath + 'main.scss',
+                }
+            }
+        },
     });
 //    grunt.registerTask('ready', 'build ready task.', function(type) {
 //        if (type === 'example') {
