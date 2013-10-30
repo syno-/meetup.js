@@ -18,5 +18,5 @@ node_modules
 
 main/js/meetup.*
 main/js/example.*
-main/css/*.css
+main/css/*
 
