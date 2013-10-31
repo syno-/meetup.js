@@ -19,10 +19,42 @@ var webrtc = new SimpleWebRTC({
 
 });
 
+
+/*
+
+Events :
+
+webrtc.leaveRoom();
+
+webrtc.createRoom('RoomName', function() {
+});
+
+
+webrtc.stopScreenShare();
+webrtc.getLocalScreen();
+webrtc.shareScreen(function(err, stream) {
+});
+webrtc.getRemoteVideoContainer();
+webrtc.stopLocalVideo();
+webrtc.startLocalVideo();
+webrtc.setVolumeForAll(volume);
+webrtc.setVolumeForAll(volume);
+
+webrtc.mute();
+webrtc.unmute();
+webrtc.pause();
+webrtc.resume();
+
+webrtc.removePeers(function(roomId, roomType) {
+});
+
+*/
+
 // we have to wait until it's ready
-webrtc.on('readyToCall', function () {
+webrtc.on('readyToCall', function (err, roomDescription) {
     // you can name it anything
-    webrtc.joinRoom(roomName);
+    webrtc.joinRoom(roomName, function(err, roomDescription) {
+	});
 });
 
 // ----------------------------

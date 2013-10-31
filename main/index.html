@@ -1,32 +1,34 @@
 <!DOCTYPE HTML>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8" />
-        <title>WebRTC</title>
+	<head>
+		<meta charset="UTF-8" />
+		<title>WebRTC</title>
 
-        <link rel="stylesheet" href="/css/main.css" />
+		<link rel="stylesheet" href="/css/main.css" />
 
-        <script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
-        <script type="text/javascript" src="/js/simplewebrtc.min.js"></script>
-        <script type="text/javascript" src="/js/meetup.js"></script>
-    </head>
-    <body>
-        <div class="container">
-            <h1>WebRTC</h1>
-            <div class="table">
-                <div class="row">
-                    <h2>会議室 - (<span id="room-name"></span>)</h2>
-                    <p><img src="/img/loading.gif" alt="Loading..." />カメラへのアクセスを求めています…。</p>
-                    <div id="remoteVideos"></div>
-                    <video id="localVideo"></video>
-                </div>
-                <div class="row attendances">
-                    <h2>参加者</h2>
-                    <ul id="list-attendances">
-                        <li>まだ参加しているユーザが居ません。</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </body>
+		<script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
+		<script type="text/javascript" src="/js/simplewebrtc.min.js"></script>
+		<script type="text/javascript" src="/js/meetup.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<h1>WebRTC</h1>
+			<div class="table">
+				<div class="row">
+					<h2>会議室 - (<span id="room-name"></span>)</h2>
+					<div class="alert-permit">
+						<p><img src="/img/loading.gif" alt="Loading..." />カメラへのアクセスを求めています…。</p>
+					</div>
+					<div id="remoteVideos"></div>
+					<video id="localVideo"></video>
+				</div>
+				<div class="row attendances">
+					<h2>参加者</h2>
+					<ul id="list-attendances">
+						<li>まだ参加しているユーザが居ません。</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>
