@@ -10,7 +10,7 @@ How to build
 
 ### Clone project
 
-	$ git clone git@bitbucket.org:esperia/meetup.js.git
+	$ git clone --recursive git@bitbucket.org:esperia/meetup.js.git
 	$ cd meetup.js
 
 ### Install npm submodules
