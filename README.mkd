@@ -5,21 +5,28 @@ Meet up
 
 
 
-
-Usage
+How to build
 --------------
 
+### Clone project
 
-###
+	$ git clone git@bitbucket.org:esperia/meetup.js.git
+	$ cd meetup.js
 
+### Install npm submodules
 
+	$ npm i
 
-###
+### Build
+
+	$ grunt default
+
 
 
 License
 --------------
 
 MIT
+
 
 
