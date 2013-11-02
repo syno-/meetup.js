@@ -1,5 +1,4 @@
 
-
 /**
  *
  * Usage: 
@@ -26,8 +25,8 @@
  *
  *     - onCacelled
  */
-Meetup = (function() {
-    var meetup = function(info) {
+Meetup._notify = function() {
+    var n = function(info) {
         this.notify = new Notification('TVConf', {
             tag: info.tag ? info.tag : 'Meetup',
             body: info.body ? info.body : 'Invited.',
@@ -35,7 +34,7 @@ Meetup = (function() {
         });
     };
 
-    meetup.prototype.click = function(cb) {
+    n.prototype.click = function(cb) {
         var self = this;
         this.notify.onclick = function() {
             notification.close();  window.open().close();  window.focus();
@@ -43,22 +42,22 @@ Meetup = (function() {
         };
         return this;
     };
-    meetup.prototype.display = function(cb) {
+    n.prototype.display = function(cb) {
         var self = this;
         notification.ondisplay = function(){
             if (cb) cb.apply(self, arguments);
         };
         return this;
     };
-    meetup.prototype.show = function() {
+    n.prototype.show = function() {
         this.notify.show();
     };
-    meetup.prototype.cancel = function() {
+    n.prototype.cancel = function() {
         this.notify.cancel();
     };
 
     // pseudo static!
-    meetup.request = function() {
+    n.request = function() {
         if (Notification && Notification.requestPermission) {
             Notification.requestPermission();
 
@@ -68,5 +67,8 @@ Meetup = (function() {
         return false;
     };
 
-    return meetup;
+    return n;
 };
+
+
+Meetup.notify = new Meetup._notify();

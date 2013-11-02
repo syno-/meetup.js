@@ -11,11 +11,26 @@
 	.row {
 		display: table-cell;
 	}
-	.attendances {
+	.presence {
         width: 300px;
 	}
 	.alert-permit {
 		border: 1px solid #2D579A;
-		margin: 20px;
+		margin: 20px 0;
+        padding: 10px;
+        border-radius: 1em/1em;
+
+        .row:first-child {
+            width: 64px;
+            margin-right: 35px;
+            vertical-align: middle;
+        }
+        .row:last-child {
+            vertical-align: middle;
+        }
 	}
+    #localVideo {
+        width: 200px;
+        height: 200px;
+    }
 }

@@ -7,7 +7,8 @@
 		<link rel="stylesheet" href="/css/main.css" />
 
 		<script type="text/javascript" src="/js/jquery-2.0.3.min.js"></script>
-		<script type="text/javascript" src="/js/simplewebrtc.min.js"></script>
+		<script type="text/javascript" src="/js/simplewebrtc.bundle.js"></script>
+		<script type="text/javascript" src="/js/socket.io.js"></script>
 		<script type="text/javascript" src="/js/meetup.js"></script>
 	</head>
 	<body>
@@ -16,15 +17,34 @@
 			<div class="table">
 				<div class="row">
 					<h2>会議室 - (<span id="room-name"></span>)</h2>
-					<div class="alert-permit">
-						<p><img src="/img/loading.gif" alt="Loading..." />カメラへのアクセスを求めています…。</p>
+
+					<div id="alert-permit" class="table alert-permit">
+                        <div class="row">
+                            <img src="/img/loading.gif" alt="Loading..." />
+                        </div>
+                        <div class="row">
+						    <p>カメラとマイクへのアクセスを求めています…。</p>
+                        </div>
 					</div>
+
+					<h2>Remote Video</h2>
 					<div id="remoteVideos"></div>
+					<h2>My Video</h2>
 					<video id="localVideo"></video>
+                    <div class="controller">
+                        <button id="mute">Mute</button>
+                        <button id="unmute">Unmute</button>
+                        <button id="pause">Pause</button>
+                        <button id="resume">Resume</button>
+                        <button id="stopVideo">stopVideo</button>
+                        <button id="startVideo">startVideo</button>
+                        <input type="range" id="volume" min="1" max="100">
+                    </div>
 				</div>
-				<div class="row attendances">
+				<div class="row presence">
 					<h2>参加者</h2>
-					<ul id="list-attendances">
+
+					<ul id="list-presence">
 						<li>まだ参加しているユーザが居ません。</li>
 					</ul>
 				</div>
@@ -32,3 +52,5 @@
 		</div>
 	</body>
 </html>
+
+
