@@ -1,3 +1,2 @@
 
-var Meetup = function() {
-};
+var Meetup;

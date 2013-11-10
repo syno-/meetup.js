@@ -1,20 +1,16 @@
 
 
-
-
-
-
 // ----------------------------
 // Libs
 // ----------------------------
-var roomName = 'esperia'; // TODO
+var organizationId = 'esperia'; // TODO
 var meetup = Meetup.create({
 }).ready(function(sessionId) {
     console.log('ready, sessionId=', sessionId);
     $('#alert-permit').remove();
 
     // ready
-    this.joinRoom(roomName, function(err, roomDescription) {
+    this.joinRoom(organizationId, function(err, roomDescription) {
         console.log('joinRoom', err);
     });
 }).denied(function(event) {
@@ -24,40 +20,31 @@ var meetup = Meetup.create({
     $('#localVideo').addClass('speaking');
 }).stoppedSpeaking(function(event) {
     $('#localVideo').removeClass('speaking');
+}).addedPeer(function(peer) {
+    Meetup.notify({
+        title: peer.id + 'が会議に参加しました。'
+    }).show();
+    refreshList(this.members);
+}).removedPeer(function(peer) {
+    refreshList(this.members);
 });
 var webrtc = meetup.get();
+
+function refreshList(members) {
+    var el = $('#list-presence').empty();
+    for (var id in members) {
+        var member = members[id];
+
+        $('<li/>').text(member.peer.id).appendTo(el);
+    }
+}
 
 // ----------------------------
 // DOM
 // ----------------------------
 
 $(function() {
-    $('#room-name').text(roomName);
-
-    var userApi = {
-        users: [{
-            id: 0,
-            name: 'むおおおお',
-            presence: {
-                type: 0,
-                message: '',
-            },
-        }, {
-            id: 0,
-            name: 'えすぺりあ',
-            presence: {
-                type: 0,
-                message: '',
-            },
-        }]
-    };
-    $('#list-presence').click(function(e) {
-        var ulEl = $(this).empty();
-
-        $.each(userApi.users, function(i, o) {
-            $('<li/>').text(o.name).appendTo(ulEl);
-        });
-    });
+    $('#room-name').text(organizationId);
 
     var isStopping = false;
     $('#localVideo').click(function(e) {
@@ -109,13 +96,15 @@ $(function() {
     }).mouseup(function(evt) {
         console.log('mouseup', evt);
     });
-    webrtc.on('videoAdded', function(evt) {
-        console.log('videoAdded');
-    });
-    webrtc.on('localStream', function(evt) {
-        console.log('localStream');
-    });
 
+    $('#enable-notify').click(function() {
+        var self = $(this);
+        Meetup.notify.request(function(status) {
+                self.text(status);
+            if (status === 'granted') {
+            }
+        });
+    });
 
 /*
 
@@ -123,7 +112,7 @@ Events :
 
 webrtc.leaveRoom();
 
-webrtc.createRoom('RoomName', function() {
+webrtc.createRoom('organizationId', function() {
 });
 
 
@@ -132,7 +121,6 @@ webrtc.getLocalScreen();
 webrtc.shareScreen(function(err, stream) {
 });
 webrtc.getRemoteVideoContainer();
-webrtc.setVolumeForAll(volume);
 webrtc.setVolumeForAll(volume);
 
 webrtc.removePeers(function(roomId, roomType) {

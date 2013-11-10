@@ -5,11 +5,9 @@ module.exports = function(grunt) {
     var releasePath = 'main/js/';
     var builds = [
         buildPath + 'meetup.boot.js',
-        buildPath + 'meetup.notify.js',
         buildPath + 'meetup.main.js',
-        buildPath + 'meetup.finish.js',
         buildPath + 'meetup.notify.js',
-        buildPath + 'meetup.after.js',
+        buildPath + 'meetup.finish.js',
         buildPath + 'example.main.js',
         buildPath + 'example.notify.js',
     ];

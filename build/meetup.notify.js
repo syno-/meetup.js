@@ -10,7 +10,7 @@
  *
  *     var notify = Meetup.notify({
  *         title: '',
- *         body: '',
+ *         body: 'Invited.',
  *         tag: '',
  *         icon: ''
  *     }).click(function(evt) {
@@ -25,50 +25,113 @@
  *
  *     - onCacelled
  */
-Meetup._notify = function() {
-    var n = function(info) {
-        this.notify = new Notification('TVConf', {
-            tag: info.tag ? info.tag : 'Meetup',
-            body: info.body ? info.body : 'Invited.',
-            icon: info.icon ? info.icon : '', // TODO: require defualt icon.
-        });
-    };
+Meetup.notify = (function() {
+    var notifies = [];
 
-    n.prototype.click = function(cb) {
-        var self = this;
-        this.notify.onclick = function() {
-            notification.close();  window.open().close();  window.focus();
-            if (cb) cb.apply(self, arguments);
+    function show(self) {
+        var nt = new Notification(self.title, self.info);
+        nt.ondisplay = function() {
+            if (!self.onDisplay) {
+                setTimeout(function() {
+                    nt.close();
+                }, 5000);
+            } else {
+                self.onDisplay.apply(this, arguments);
+            }
         };
+
+        return nt;
+    }
+
+    // NotificationWrapper
+    var n = function(title, info) {
+        this.title = title;
+        this.info = info;
+    };
+    n.prototype.click = function(cb) {
+        this.onClick = cb;
         return this;
     };
     n.prototype.display = function(cb) {
-        var self = this;
-        notification.ondisplay = function(){
-            if (cb) cb.apply(self, arguments);
-        };
+        this.onDisplay = cb;
         return this;
     };
     n.prototype.show = function() {
-        this.notify.show();
+        if (Notification.permission === 'granted') {
+            this.notify = show(this);
+        } else {
+            var self = this;
+            request(function(status) {
+                if (status === 'granted') {
+                    self.notify = show(self);
+                }
+            });
+        }
     };
     n.prototype.cancel = function() {
-        this.notify.cancel();
+        if (this.notify) {
+            this.notify.cancel();
+        }
+    };
+    n.prototype.tag = function() {
+        if (this.notify) {
+            return this.notify.tag;
+        } else {
+            return this.info.tag;
+        }
     };
 
-    // pseudo static!
-    n.request = function() {
-        if (Notification && Notification.requestPermission) {
-            Notification.requestPermission();
-
+    function isSupported() {
+        if (Notification) {
             return true;
         }
         // not supported on your browser.
         return false;
+    }
+
+    function request(cb) {
+        if (isSupported()) {
+            Notification.requestPermission(function(status) {
+                if (Notification.permission !== status) {
+                    Notification.permission = status;
+                }
+
+                if (cb) cb.apply(this, arguments);
+            });
+        } else {
+            throw 'not supported on your browser.';
+        }
+    }
+
+    var master = function(info) {
+        if (typeof info === 'string') {
+            info = {
+                title: info
+            };
+        } else {
+            info = info || {};
+        }
+
+        var title = (info.title) ? info.title : 'TVConf';
+        info.tag = info.tag || 'Meetup';
+        //info.icon = info.icon || '';
+        var notify = notifies[info.tag]  = new n(title, info);
+
+        return notify;
     };
 
-    return n;
-};
+    // pseudo statics
 
+    master.request = function(cb) {
+        request(cb);
+    };
+    master.isSupported = function() {
+        return isSupported();
+    };
+    master.get = function(tag) {
+        return notified[tag];
+    };
 
-Meetup.notify = new Meetup._notify();
+    return master;
+})();
+

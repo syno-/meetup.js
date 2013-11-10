@@ -29,8 +29,19 @@
 Meetup = (function() {
     var meetup = function(info) {
         this.deniedCallback = null;
-        this.sessionIds = [];
-        this.webrtc = new SimpleWebRTC({
+        this.addedPeerCallback = null;
+        this.removedPeerCallback = null;
+        /**
+         * [sessionId] = {
+         *  peer: <Peer>,
+         *  //videoEl: <video>, // videoEl はPeerが持ってる 
+         *  dataChannel: <RTCDataChannel>,
+         * }
+         *
+         */
+        this.members = [];
+
+        var config = {
             // the id/element dom element that will hold "our" video
             localVideoEl: 'localVideo',
             // the id/element dom element that will hold remote videos
@@ -62,28 +73,70 @@ Meetup = (function() {
             // autoRemoveVideos: true,
             // adjustPeerVolume: true,
             // peerVolumeWhenSpeaking: 0.25
-        });
+        };
+
+        // merge
+        info = (info) ? info : {};
+        for (var item in info) {
+            if (info.hasOwnProperty(item)) {
+                config[item] = config[item];
+            }
+        }
+        this.webrtc = new SimpleWebRTC(config);
+
+        var self = this;
 
         this.webrtc.on('connectionReady', function (event) {
             console.log('connectionReady', event);
         });
+        //this.webrtc.on('videoAdded', function(videoEl, peer) {
+        //    console.log('videoAdded', videoEl, peer, 'id=', peer.id);
+        //    var member = getMember(peer.id);
+        //    member.videoEl = videoEl;
+        //    member.peer = peer;
+        //});
+        this.webrtc.on('peerStreamAdded', function(peer) {
+            console.log('peerStreamAdded', peer);
+            self.members.push({
+                peer: peer
+            });
 
-        var self = this;
-        this.webrtc.on('*', function (event) {
-            if (event.name === 'PermissionDeniedError') {
-                if (self.deniedCallback) self.deniedCallback();
-            }
+            if (self.addedPeerCallback) self.addedPeerCallback.apply(self, arguments);
+        });
+        this.webrtc.on('peerStreamRemoved', function(peer) {
+            console.log('peerStreamRemoved', peer);
+
+            self.members = self.members.filter(function(v) {
+                return v.peer.id != peer.id;
+            });
+
+            if (self.removedPeerCallback) self.removedPeerCallback.apply(self, arguments);
+        });
+        
+        this.webrtc.on('localStream', function(evt) {
+            console.log('localStream');
         });
 
         this.webrtc.on('*', function (event) {
-            if (event.name === 'PermissionDeniedError') {
-                if (self.deniedCallback) self.deniedCallback();
+            if (event.name === 'PermissionDeniedError' || // for Chrome >=33
+                event.name === 'PERMISSION_DENIED' // for Chrome <=30
+               ) {
+                if (self.deniedCallback) self.deniedCallback(event);
+            } else if (
+                event.name === 'NavigatorUserMediaError' ||
+                event.name === 'NOT_SUPPORTED_ERROR'
+               ) {
+                   // TODO: Not supported on this browser.
             }
         });
     };
 
     meetup.prototype.get = function() {
         return this.webrtc;
+    };
+
+    meetup.prototype.getSocketIO = function() {
+        return this.webrtc.connection;
     };
 
     // we have to wait until it's ready
@@ -112,6 +165,16 @@ Meetup = (function() {
         this.webrtc.joinRoom(roomName, function(err, roomDescription) {
             if (cb) cb.call(this, err, roomDescription);
         });
+        return this;
+    };
+
+    meetup.prototype.addedPeer = function(cb) {
+        this.addedPeerCallback = cb;
+        return this;
+    };
+
+    meetup.prototype.removedPeer = function(cb) {
+        this.removedPeerCallback = cb;
         return this;
     };
 
