@@ -8,64 +8,30 @@
 // Libs
 // ----------------------------
 var roomName = 'esperia'; // TODO
-var webrtc = new SimpleWebRTC({
-    // the id/element dom element that will hold "our" video
-    localVideoEl: 'localVideo',
-    // the id/element dom element that will hold remote videos
-    remoteVideosEl: 'remoteVideos',
-    // immediately ask for camera access. default false
-    autoRequestMedia: true,
-    autoAdijustMic: true,
-    debug: true,
-    peerConnectionConfig: {
-        iceServers: [{"url": "stun:stun.l.google.com:19302"}]
-    },
-    peerConnectionContraints: {
-        optional: [
-            {DtlsSrtpKeyAgreement: true},
-            {RtpDataChannels: true}
-        ]
-    },
-    autoAdjustMic: false,
-    media: {
-        audio: true,
-        video: true
-    },
-    detectSpeakingEvents: true,
-    enableDataChannels: true,
-
-    url: 'http://192.168.31.6:8888'
-    //    url: 'http://signaling.simplewebrtc.com:8888',
-    //    enableDataChannels: true,
-    //    autoRemoveVideos: true,
-    //    adjustPeerVolume: true,
-    //    peerVolumeWhenSpeaking: 0.25
-});
-
-webrtc.on('connectionReady', function (event) {
-    console.log('connectionReady', event);
-});
-
-// we have to wait until it's ready
-webrtc.on('readyToCall', function (event) {
-    console.log('event', event);
+var meetup = Meetup.create({
+}).ready(function(sessionId) {
+    console.log('ready, sessionId=', sessionId);
     $('#alert-permit').remove();
-    webrtc.joinRoom(roomName, function(err, roomDescription) {
+
+    // ready
+    this.joinRoom(roomName, function(err, roomDescription) {
         console.log('joinRoom', err);
     });
+}).denied(function(event) {
+    var msg = 'カメラとマイクへのアクセスが許可されていません。<br/>許可した後、リロードしてください。';
+    $('#alert-permit').empty().append($('<p/>').html(msg));
+}).speaking(function(event) {
+    $('#localVideo').addClass('speaking');
+}).stoppedSpeaking(function(event) {
+    $('#localVideo').removeClass('speaking');
 });
+var webrtc = meetup.get();
 
 // ----------------------------
 // DOM
 // ----------------------------
 
 $(function() {
-    webrtc.on('*', function (event) {
-        if (event.name === 'PermissionDeniedError') {
-            var msg = 'カメラとマイクへのアクセスが許可されていません。<br/>許可した後、リロードしてください。';
-            $('#alert-permit').empty().append($('<p/>').html(msg));
-        }
-    });
     $('#room-name').text(roomName);
 
     var userApi = {
@@ -119,22 +85,22 @@ $(function() {
     }
 
     $('#mute').click(function() {
-        webrtc.mute();
+        meetup.mute();
     });
     $('#unmute').click(function() {
-        webrtc.unmute();
+        meetup.unmute();
     });
     $('#pause').click(function() {
-        webrtc.pause();
+        meetup.pause();
     });
     $('#resume').click(function() {
-        webrtc.resume();
+        meetup.resume();
     });
     $('#stopVideo').click(function() {
-        webrtc.stopLocalVideo();
+        meetup.stopLocalVideo();
     });
     $('#startVideo').click(function() {
-        webrtc.startLocalVideo();
+        meetup.startLocalVideo();
     });
     $('#volume').change(function(evt) {
         console.log('volume', evt);
