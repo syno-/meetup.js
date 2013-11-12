@@ -1,0 +1,39 @@
+
+
+.container {
+    h1, h2 {
+        border-bottom: 1px solid #EEE;
+    }
+    .table {
+        display: table;
+        width: 100%;
+    }
+	.row {
+		display: table-cell;
+	}
+	.presence {
+        width: 300px;
+	}
+	.alert-permit {
+		border: 1px solid #2D579A;
+		margin: 20px 0;
+        padding: 10px;
+        border-radius: 1em/1em;
+
+        .row:first-child {
+            width: 64px;
+            margin-right: 35px;
+            vertical-align: middle;
+        }
+        .row:last-child {
+            vertical-align: middle;
+        }
+	}
+    #localVideo {
+        width: 200px;
+        height: 200px;
+    }
+    .speaking {
+        border: 3px solid #23AC0E;
+    }
+}

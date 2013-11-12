@@ -4,8 +4,12 @@ module.exports = function(grunt) {
     var buildPath = 'build/';
     var releasePath = 'main/js/';
     var builds = [
+        buildPath + 'meetup.boot.js',
         buildPath + 'meetup.main.js',
+        buildPath + 'meetup.notify.js',
+        buildPath + 'meetup.finish.js',
         buildPath + 'example.main.js',
+        buildPath + 'example.notify.js',
     ];
 
     grunt.initConfig({
@@ -40,23 +44,26 @@ module.exports = function(grunt) {
         },
         watch: {
             scripts: {
-                files: buildPath + '**/*.js',
+                files: [
+                    buildPath + '**/*.js',
+                    buildPath + '**/*.scss',
+                ],
                 tasks: ['default'],
                 options: {
                     interrupt: true,
                 },
             },
         },
-//        sass: {
-//            dist: {
-//                options: {
-//                    style: 'expanded'
-//                },
-//                files: {
-//                    'main.css': 'main.scss',
-//                }
-//            }
-//        },
+        sass: {
+            dist: {
+                options: {
+                    style: 'expanded',
+                },
+                files: {
+                    './main/css/main.css': buildPath + 'main.scss',
+                }
+            }
+        },
     });
 //    grunt.registerTask('ready', 'build ready task.', function(type) {
 //        if (type === 'example') {
