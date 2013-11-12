@@ -9,6 +9,7 @@ Thumbs.db
 # Build tools
 ##############
 node_modules
+.sass-cache
 
 
 ##############
