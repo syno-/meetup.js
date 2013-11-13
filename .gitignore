@@ -9,6 +9,7 @@ Thumbs.db
 # Build tools
 ##############
 node_modules
+npm-debug.log
 .sass-cache
 
 
