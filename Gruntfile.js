@@ -9,7 +9,6 @@ module.exports = function(grunt) {
         buildPath + 'meetup.notify.js',
         buildPath + 'meetup.finish.js',
         buildPath + 'example.main.js',
-        buildPath + 'example.notify.js',
     ];
 
     grunt.initConfig({
