@@ -2,93 +2,26 @@
 
 /**
  *
- * Usage: 
- * First, request permission.
- *
- *     Meetup.notify.request();
- *
- * Next, callNotify.
- *
- *     var notify = Meetup.notify({
- *         title: '',
- *         body: '',
- *         tag: '',
- *         icon: ''
- *     }).click(function(evt) {
- *     }).display(function(evt) {
- *     }.show();
- *
- * Misc
- *     
- *     notify.cancel();
- *
- * TODO:
- *
- *     - onCacelled
  */
 Meetup = (function() {
-    var meetup = function(info) {
+    var meetup = function(config) {
         this.deniedCallback = null;
         this.addedPeerCallback = null;
         this.removedPeerCallback = null;
+        this.myself = {};
         /**
-         * [sessionId] = {
+         * [{
          *  peer: <Peer>,
-         *  //videoEl: <video>, // videoEl はPeerが持ってる 
          *  dataChannel: <RTCDataChannel>,
-         * }
+         * }, ...]
          *
          */
         this.members = [];
-
-        var config = {
-            // the id/element dom element that will hold "our" video
-            localVideoEl: 'localVideo',
-            // the id/element dom element that will hold remote videos
-            remoteVideosEl: 'remoteVideos',
-            // immediately ask for camera access. default false
-            autoRequestMedia: true,
-            autoAdijustMic: true,
-            debug: true,
-            peerConnectionConfig: {
-                iceServers: [{"url": "stun:stun.l.google.com:19302"}]
-            },
-            peerConnectionContraints: {
-                optional: [
-                    {DtlsSrtpKeyAgreement: true},
-                    {RtpDataChannels: true}
-                ]
-            },
-            autoAdjustMic: false,
-            media: {
-                audio: true,
-                video: true
-            },
-            detectSpeakingEvents: true,
-            enableDataChannels: true,
-
-            url: 'http://192.168.31.6:8888'
-            // url: 'http://signaling.simplewebrtc.com:8888',
-            // enableDataChannels: true,
-            // autoRemoveVideos: true,
-            // adjustPeerVolume: true,
-            // peerVolumeWhenSpeaking: 0.25
-        };
-
-        // merge
-        info = (info) ? info : {};
-        for (var item in info) {
-            if (info.hasOwnProperty(item)) {
-                config[item] = config[item];
-            }
-        }
+        this.debug = !!config.debug;
         this.webrtc = new SimpleWebRTC(config);
 
         var self = this;
 
-        this.webrtc.on('connectionReady', function (event) {
-            console.log('connectionReady', event);
-        });
         //this.webrtc.on('videoAdded', function(videoEl, peer) {
         //    console.log('videoAdded', videoEl, peer, 'id=', peer.id);
         //    var member = getMember(peer.id);
@@ -131,6 +64,10 @@ Meetup = (function() {
         });
     };
 
+    // ----------------------------
+    // Get objects
+    // ----------------------------
+
     meetup.prototype.get = function() {
         return this.webrtc;
     };
@@ -139,57 +76,71 @@ Meetup = (function() {
         return this.webrtc.connection;
     };
 
+    meetup.prototype.my = function() {
+        return this.myself;
+    };
+
+    // ----------------------------
+    // Operation
+    // ----------------------------
+
+    meetup.prototype.login = function(oid, cb) {
+        this.organizationId = oid;
+        var self = this;
+        this.webrtc.on('connectionReady', function (sessionId) {
+            console.log('connectionReady', sessionId);
+            self.myself.sessionId = sessionId;
+
+            // TODO: ここでサービスへRIDを送ってログインする。
+            setTimeout(function() {
+                // TODO: RIDが無いとか不正なRIDでしたみたいな場合はエラーオブジェクトを返します
+                var err = null;
+                if (!oid) {
+                    // RIDないぜ
+                    err = {
+                        message: 'OrganizationId is empty.'
+                    };
+                }
+                if (self.debug) {
+                    console.log('error', err);
+                }
+                if (cb) cb(err);
+            }, 500);
+        });
+
+        return this;
+    };
+
+    function createError(message) {
+        var err = {
+            message: message
+        };
+
+        return err;
+    }
+
     // we have to wait until it's ready
     meetup.prototype.ready = function(cb) {
+        this.startLocalVideo();
+        var self = this;
         this.webrtc.on('readyToCall', function (event) {
-            if (cb) cb.call(this, event);
+            // TODO: err is always null. (Not Implemented)
+            if (cb) cb.call(self, null, event);
         });
         return this;
     };
 
-    meetup.prototype.speaking = function(cb) {
-        this.webrtc.on('speaking', function (event) {
-            if (cb) cb.call(this, event);
-        });
-        return this;
-    };
-
-    meetup.prototype.stoppedSpeaking = function(cb) {
-        this.webrtc.on('stoppedSpeaking', function (event) {
-            if (cb) cb.call(this, event);
-        });
-        return this;
-    };
-
-    meetup.prototype.joinRoom = function(cb) {
+    meetup.prototype.joinRoom = function(roomId, cb) {
+        if (!roomId) {
+            if (cb) cb.call(self, createError('roomId is MUST be not empty.'), null);
+            return this;
+        }
+        var self = this;
         this.webrtc.joinRoom(roomName, function(err, roomDescription) {
-            if (cb) cb.call(this, err, roomDescription);
+            if (cb) cb.call(self, err, roomDescription);
         });
         return this;
     };
-
-    meetup.prototype.addedPeer = function(cb) {
-        this.addedPeerCallback = cb;
-        return this;
-    };
-
-    meetup.prototype.removedPeer = function(cb) {
-        this.removedPeerCallback = cb;
-        return this;
-    };
-
-//    meetup.prototype.error = function(cb) {
-//        return this;
-//    };
-
-    meetup.prototype.denied = function(cb) {
-        this.deniedCallback = cb;
-        return this;
-    };
-
-    // ----------------------------
-    // basic events
-    // ----------------------------
 
     meetup.prototype.mute = function(cb) {
         this.webrtc.on('audioOff', function (event) {
@@ -236,26 +187,44 @@ Meetup = (function() {
         return this;
     };
 
-//    meetup.prototype.click = function(cb) {
-//        var self = this;
-//        this.notify.onclick = function() {
-//            notification.close();  window.open().close();  window.focus();
-//            if (cb) cb.apply(self, arguments);
-//        };
-//        return this;
-//    };
-//
-//    // pseudo static!
-//    meetup.request = function() {
-//        if (Notification && Notification.requestPermission) {
-//            Notification.requestPermission();
-//
-//            return true;
-//        }
-//        // not supported on your browser.
-//        return false;
-//    };
+    // ----------------------------
+    // Events
+    // ----------------------------
 
+    meetup.prototype.speaking = function(cb) {
+        this.webrtc.on('speaking', function (event) {
+        var self = this;
+            if (cb) cb.call(self, event);
+        });
+        return this;
+    };
+
+    meetup.prototype.stoppedSpeaking = function(cb) {
+        var self = this;
+        this.webrtc.on('stoppedSpeaking', function (event) {
+            if (cb) cb.call(self, event);
+        });
+        return this;
+    };
+
+    meetup.prototype.addedPeer = function(cb) {
+        this.addedPeerCallback = cb;
+        return this;
+    };
+
+    meetup.prototype.removedPeer = function(cb) {
+        this.removedPeerCallback = cb;
+        return this;
+    };
+
+    meetup.prototype.denied = function(cb) {
+        this.deniedCallback = cb;
+        return this;
+    };
+
+    // ----------------------------
+    // basic events
+    // ----------------------------
 
     // ----------------------------
     // master
@@ -264,8 +233,8 @@ Meetup = (function() {
     var master = function() {
     };
 
-    master.prototype.create = function(info){
-        return new meetup(info);
+    master.prototype.create = function(config) {
+        return new meetup(config);
     };
     
     return new master();

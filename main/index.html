@@ -14,18 +14,24 @@
 	<body>
 		<div class="container">
 			<h1>WebRTC</h1>
-			<div class="table">
-				<div class="row">
-					<h2>会議室 - (<span id="room-name"></span>)</h2>
-
+            <!-- 入室 -->
+			<div id="waiting">
+                <div class="row row-center">
 					<div id="alert-permit" class="table alert-permit">
                         <div class="row">
-                            <img src="/img/loading.gif" alt="Loading..." />
+                            <img src="/img/loading.gif" class="row-center" width="32" height="32" alt="Loading" />
                         </div>
                         <div class="row">
-						    <p>カメラとマイクへのアクセスを求めています…。</p>
+						    <p id="state" class="row-center"></p>
                         </div>
 					</div>
+                </div>
+			</div>
+
+            <!-- main -->
+			<div id="meetup" class="table">
+				<div class="row">
+					<h2 id="room-name"></h2>
 
 					<h2>Remote Video</h2>
 					<div id="remoteVideos"></div>
