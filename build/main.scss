@@ -25,9 +25,10 @@
 	}
 	.alert-permit {
 		border: 1px solid #2D579A;
-		margin: 20px 0;
+		margin: 20px auto;
         padding: 10px;
         border-radius: 1em/1em;
+        width: 500px;
 
         .row:first-child {
             width: 64px;
