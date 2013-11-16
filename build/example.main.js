@@ -207,14 +207,5 @@ $(function() {
         console.log('mouseup', evt);
     });
 
-    $('#enable-notify').click(function() {
-        var self = $(this);
-        Meetup.notify.request(function(status) {
-                self.text(status);
-            if (status === 'granted') {
-            }
-        });
-    });
-
 });
 
