@@ -21,3 +21,5 @@ main/js/meetup.*
 main/js/example.*
 main/css/*
 
+main/room_files/*
+
