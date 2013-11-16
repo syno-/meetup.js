@@ -28,6 +28,23 @@
 Meetup.notify = (function() {
     var notifies = [];
 
+    // Notification.permission for chrome
+    if (window.Notification && !Notification.permission) {
+        if (window.webkitNotifications) {
+            var permit = window.webkitNotifications.checkPermission();
+            var status;
+            if (permit === 0) {
+                status = 'granted';
+            } else if (permit === 2) {
+                status = 'denied';
+            } else {
+                // permit === 1 or not specified
+                status = 'default';
+            }
+            Notification.permission = status;
+        }
+    }
+
     function show(self) {
         var nt = new Notification(self.title, self.info);
         nt.ondisplay = function() {
@@ -122,8 +139,12 @@ Meetup.notify = (function() {
 
     // pseudo statics
 
+    master.permission = function() {
+        return Notification.permission;
+    };
     master.request = function(cb) {
         request(cb);
+        return Notification.permission;
     };
     master.isSupported = function() {
         return isSupported();

@@ -1,4 +1,10 @@
 
+/*
+ *
+ * TODO:
+ *
+ *   招待待ち
+ */
 
 /**
  *
@@ -131,12 +137,12 @@ Meetup = (function() {
     };
 
     meetup.prototype.joinRoom = function(roomId, cb) {
-        if (!roomId) {
+        if (!roomId || typeof roomId !== 'string') {
             if (cb) cb.call(self, createError('roomId is MUST be not empty.'), null);
             return this;
         }
         var self = this;
-        this.webrtc.joinRoom(roomName, function(err, roomDescription) {
+        this.webrtc.joinRoom(roomId, function(err, roomDescription) {
             if (cb) cb.call(self, err, roomDescription);
         });
         return this;

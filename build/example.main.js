@@ -28,8 +28,6 @@ var Settings = {
 };
 console.log('Settings', Settings);
 
-
-
 $(function() {
     var startTime = Date.now(); // TEST
     
@@ -73,24 +71,14 @@ $(function() {
     }).login(Settings.OID, function(err) {
         if (err) {
             // ログイン失敗
-            stateEl.text('ログインに失敗しました。');
+            stateEl.text('ログインに失敗しました。企業IDが見つかりません。');
             return;
         }
         // ログイン成功
 
-        // TODO: ルームIDがあるかどうかの判定。
         // ルームIDがなければ、招待待ちを行う。
-        if (Settings.RID) {
-        } else {
-            // TODO: ROOMIDがなければ通知を有効にするかどうか聞く？
-            Meetup.notify.request(function(state) {
-                // 結果受取
-                Meetup.notify('通知が有効になりました。');
-            });
-            if (meetup.debug) {
-                stateEl.text('ユーザを待っています…。');
-            }
-
+        if (!Settings.RID) {
+            stateEl.text('ユーザを待っています…。');
             return;
         }
 
@@ -145,6 +133,28 @@ $(function() {
 
     $('#room-name').text('会議室 - (' + Settings.RID + ')');
     $('#permission-error').text();
+    var notifyEl = $('#btn-notify');
+    if (Meetup.notify.permission() === 'granted') {
+        notifyEl.hide();
+    } else if (Meetup.notify.permission() === 'denied') {
+        notifyEl.attr('disabled', 'disabled');
+    } else {
+        notifyEl.click(function(evt) {
+            console.log('request notify');
+            Notification.requestPermission(function (status) {
+                console.log('status', status);
+
+                if (status === 'granted') {
+                    // 通知が有効になりました。
+                    notifyEl.hide();
+                } else if (status === 'denied') {
+                    notifyEl.attr('disabled', 'disabled');
+                } else {
+                    // default
+                }
+            });
+        });
+    }
 
     var isStopping = false;
     $('#localVideo').click(function(e) {
