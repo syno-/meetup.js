@@ -8,6 +8,9 @@ module.exports = function(grunt) {
         buildPath + 'meetup.main.js',
         buildPath + 'meetup.notify.js',
         buildPath + 'meetup.finish.js',
+        //buildPath + 'example.main.js',
+    ];
+    var debugBuilds = [
         buildPath + 'example.main.js',
     ];
 
@@ -18,7 +21,7 @@ module.exports = function(grunt) {
 //                src: buildPath + '<%= pkg.name %>.js',
 //                dest: releasePath + '<%= pkg.name %>.min.js'
 //            },
-            my_target: {
+            debug: {
                 options: {
 //                    banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
                     beautify: true,
@@ -44,6 +47,7 @@ module.exports = function(grunt) {
         watch: {
             scripts: {
                 files: [
+                    'Gruntfile.js',
                     buildPath + '**/*.js',
                     buildPath + '**/*.scss',
                 ],
@@ -85,6 +89,8 @@ module.exports = function(grunt) {
     ]);
     grunt.registerTask('release', [
                        'jshint',
+                       'concat',
                        'uglify',
+                       'sass',
     ]);
 };
