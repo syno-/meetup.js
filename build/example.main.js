@@ -19,13 +19,22 @@ var Queries = (function() {
 })();
 console.log(Queries);
 var Settings = {
+    isLocal: (function() {
+        if (window.location.host.indexOf('192.168.') === 0) {
+            return true;
+        }
+        return false;
+    })(),
     OID: Queries.OID || null,
     RID: Queries.RID || null,
-    //STUN_URL: 'stun:stun.l.google.com:19302',
-    STUN_URL: 'stun1.synou.com:3478',
-    SERVER_URL: 'http://192.168.31.6:8888'
-    //SERVER_URL: 'http://192.168.24.74:8888'
 };
+Settings.STUN_URL = Settings.isLocal ?
+    'stun:stun.l.google.com:19302' :
+    'stun:stun.synou.com';
+Settings.SERVER_URL = Settings.isLocal ?
+    'http://192.168.31.6:8888' :
+//    ?  'http://192.168.24.74:8888' :
+    'http://stun2.synou.com';
 console.log('Settings', Settings);
 
 $(function() {
