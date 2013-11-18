@@ -149,14 +149,16 @@ Meetup = (function() {
     };
 
     meetup.prototype.mute = function(cb) {
+        var self = this;
         this.webrtc.on('audioOff', function (event) {
-            if (cb) cb.call(this, event);
+            if (cb) cb.call(self, event);
         });
         this.webrtc.mute();
         return this;
     };
 
     meetup.prototype.unmute = function(cb) {
+        var self = this;
         this.webrtc.on('audioOn', function (event) {
             if (cb) cb.call(this, event);
         });
@@ -190,6 +192,8 @@ Meetup = (function() {
 
     meetup.prototype.startLocalVideo = function(cb) {
         this.webrtc.startLocalVideo();
+        // TODO: 接続完了(readyToCall)にフックする？
+        if (cb) cb.call(this);
         return this;
     };
 
@@ -198,8 +202,8 @@ Meetup = (function() {
     // ----------------------------
 
     meetup.prototype.speaking = function(cb) {
-        this.webrtc.on('speaking', function (event) {
         var self = this;
+        this.webrtc.on('speaking', function (event) {
             if (cb) cb.call(self, event);
         });
         return this;
@@ -227,10 +231,6 @@ Meetup = (function() {
         this.deniedCallback = cb;
         return this;
     };
-
-    // ----------------------------
-    // basic events
-    // ----------------------------
 
     // ----------------------------
     // master
