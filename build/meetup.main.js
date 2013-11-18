@@ -10,6 +10,8 @@
  *
  */
 Meetup = (function() {
+    var callbacks = [];
+
     function log() {
         arguments.unshift('meetup.js :');
         console.log.apply(this, arguments);
@@ -21,6 +23,14 @@ Meetup = (function() {
         };
 
         return err;
+    }
+
+	function fire(name, thisObj, args) {
+        callbacks.forEach(function(o) {
+            if (o.name === name) {
+                o.func.apply(thisObj, args);
+            }
+        });
     }
 
     var meetup = function(config) {
@@ -80,6 +90,13 @@ Meetup = (function() {
                ) {
                    // TODO: Not supported on this browser.
             }
+        });
+
+        var con = window.con = this.getConnection();
+        console.log('con', window.con);
+        con.socket.addListener('error', function(evt) {
+            //console.log('Error', evt, this);
+            fire('socketError', this, arguments);
         });
     };
 
@@ -235,6 +252,44 @@ Meetup = (function() {
     // ----------------------------
     // Events
     // ----------------------------
+
+    /**
+     *
+     */
+    meetup.prototype.on = function(name, func) {
+        if (name && func) {
+            callbacks.push({
+                name: name,
+                func: func,
+            });
+        } else {
+            if (this.debug) {
+                console.log('event name or func is empty.', name, func);
+            }
+        }
+        return this;
+    };
+
+    /**
+     * delete event
+     * 
+     * - socketError
+     * - 
+     */
+    meetup.prototype.off = function(funcOrName) {
+		if (typeof funcOrName === 'string') {
+			var name = funcOrName;
+			callbacks = callbacks.filter(function(a, b) {
+				return a.name !== name;
+			});
+		} else {
+			var func = funcOrName;
+			callbacks = callbacks.filter(function(a, b) {
+				return a.func !== func;
+			});
+		}
+        return this;
+    };
 
     meetup.prototype.speaking = function(cb) {
         var self = this;
