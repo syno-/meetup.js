@@ -56,7 +56,8 @@ $(function() {
         debug: true,
         peerConnectionConfig: {
             iceServers: [{
-                "url": Settings.STUN_URL
+                "url": Settings.STUN_URL,
+                // STUN or TURN URL
             }]
         },
         peerConnectionContraints: {
@@ -138,7 +139,8 @@ $(function() {
     // ----------------------------
     // DOM
     // ----------------------------
-    var webrtc = meetup.get();
+    // TODO: windowにエイリアス追加
+    var webrtc = window.webrtc = meetup.get();
 
     $('#room-name').text('会議室 - (' + Settings.RID + ')');
     $('#permission-error').text();
@@ -208,6 +210,15 @@ $(function() {
     $('#startVideo').click(function() {
         meetup.startLocalVideo();
     });
+    $('#shareScreen').click(function() {
+        meetup.shareScreen(function(event) {
+            console.log('shareScreen', event);
+        });
+    });
+    $('#stopScreenShare').click(function() {
+        meetup.stopScreenShare();
+    });
+    
     $('#volume').change(function(evt) {
         console.log('volume', evt);
         var volume = $(this).val();

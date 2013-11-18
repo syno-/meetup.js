@@ -10,6 +10,11 @@
  *
  */
 Meetup = (function() {
+    function log() {
+        arguments.unshift('meetup.js :');
+        console.log.apply(this, arguments);
+    }
+
     var meetup = function(config) {
         this.deniedCallback = null;
         this.addedPeerCallback = null;
@@ -78,7 +83,10 @@ Meetup = (function() {
         return this.webrtc;
     };
 
-    meetup.prototype.getSocketIO = function() {
+    /**
+     * get Socket.IO Object.
+     */
+    meetup.prototype.getConnection = function() {
         return this.webrtc.connection;
     };
 
@@ -194,6 +202,23 @@ Meetup = (function() {
         this.webrtc.startLocalVideo();
         // TODO: 接続完了(readyToCall)にフックする？
         if (cb) cb.call(this);
+        return this;
+    };
+
+    meetup.prototype.shareScreen = function(cb) {
+        this.webrtc.shareScreen(function() {
+            if (cb) cb.apply(this, arguments);
+        });
+        return this;
+    };
+
+    meetup.prototype.stopScreenShare = function(cb) {
+        if (this.debug) {
+            // TODO
+            //log('');
+            console.log('stopScreenShare');
+        }
+        this.webrtc.stopScreenShare();
         return this;
     };
 

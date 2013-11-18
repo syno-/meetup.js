@@ -8,7 +8,7 @@ module.exports = function(grunt) {
         buildPath + 'meetup.main.js',
         buildPath + 'meetup.notify.js',
         buildPath + 'meetup.finish.js',
-        //buildPath + 'example.main.js',
+        buildPath + 'example.main.js',
     ];
     var debugBuilds = [
         buildPath + 'example.main.js',
