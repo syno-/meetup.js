@@ -32,9 +32,9 @@ Settings.STUN_URL = Settings.isLocal ?
     'stun:stun.l.google.com:19302' :
     'stun:stun.synou.com';
 Settings.SERVER_URL = Settings.isLocal ?
-    'http://192.168.31.6:8888' :
-//    ?  'http://192.168.24.74:8888' :
-    'http://stun2.synou.com';
+//    'http://192.168.31.6:8888' :
+    'http://192.168.24.74:8888' :
+    'http://stun2.synou.com:8888';
 console.log('Settings', Settings);
 
 $(function() {
