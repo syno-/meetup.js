@@ -102,12 +102,12 @@ Meetup.js オブジェクトを作成・初期化します。
 引数 :
 
 * Organization ID
-   * サービスに登録した時に割り振られたIDを指定します。
+    * サービスに登録した時に割り振られたIDを指定します。
 * Callback
-   * サービスへのログイン処理を行った後に実行されるメソッドを指定します。
-   * function(err) { ... }
-      * err
-         * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
+    * サービスへのログイン処理を行った後に実行されるメソッドを指定します。
+    * function(err) { ... }
+        * err
+            * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
 
 
 
@@ -121,12 +121,12 @@ Meetup.js オブジェクトを作成・初期化します。
 引数 :
 
 * Callback
-   * サーバへの接続と、ユーザへのカメラ/マイクへのアクセスを要求します。
-   * function(err, sessionId) { ... }
-      * err
-         * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
-      * sessionId
-         * 現在接続しているサーバで固有に割り振られたIDです。自分のチャットルームへのアクセスになります。
+    * サーバへの接続と、ユーザへのカメラ/マイクへのアクセスを要求します。
+    * function(err, sessionId) { ... }
+        * err
+            * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
+        * sessionId
+            * 現在接続しているサーバで固有に割り振られたIDです。自分のチャットルームへのアクセスになります。
 
 
 
@@ -139,14 +139,14 @@ Meetup.js オブジェクトを作成・初期化します。
 引数 :
 
 * Room ID
-   * ルームIDを指定します。
+    * ルームIDを指定します。
 * Callback
-   * ルームへ入室処理が終わった際に実行されます。
-   * function(err,  roomDescription) { ... }
-      * err
-         * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
-      * roomDescription
-         * 部屋の情報が表示されます。
+    * ルームへ入室処理が終わった際に実行されます。
+    * function(err,  roomDescription) { ... }
+        * err
+            * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
+        * roomDescription
+            * 部屋の情報が表示されます。
 
 
 
@@ -158,8 +158,8 @@ Meetup.js オブジェクトを作成・初期化します。
 
 引数 :
 * Callback
-   * ルームへ入室処理が終わった際に実行されます。
-   * function() { ... }
+    * ルームへ入室処理が終わった際に実行されます。
+    * function() { ... }
 
 
 
@@ -185,8 +185,8 @@ Video Control API
 引数 :
 
 * Callback
-   * ミュートがサーバに伝わった後に実行されます。
-   * function() { ... }
+    * ミュートがサーバに伝わった後に実行されます。
+    * function() { ... }
 
 
 ### #unmute
@@ -198,8 +198,8 @@ Video Control API
 引数 :
 
 * Callback
-   * ミュートの解除がサーバに伝わった後に実行されます。
-   * function() { ... }
+    * ミュートの解除がサーバに伝わった後に実行されます。
+    * function() { ... }
 
 
 
@@ -247,27 +247,17 @@ How to build (Develop)
 ### Bild require
 
 * Git
-* ruby
-   * Ruby Gems
-      * sass
+* Ruby
+    * Ruby Gems
+        * sass
 * Node.js
-   * Grunt
+    * Grunt
 
-### Clone project
+### Setup
 
 	$ git clone --recursive git@bitbucket.org:esperia/meetup.js.git
 	$ cd meetup.js
-
-### Install Node.js
-
-	$ 
-
-### Install npm submodules
-
 	$ npm i
-
-### Build
-
 	$ grunt default
 
 
