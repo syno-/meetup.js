@@ -89,6 +89,20 @@ Meetup.js オブジェクトを作成・初期化します。
 
 		// 会話する相手のビデオの一覧が入る要素のIDです。
         localVideoEl: 'localVideo',
+
+        // ログを出力します。
+        debug: true,
+
+        // コアライブラリのログを出力します。
+        coreDebug: true,
+
+        // getUserMediaメソッドに渡す Constraints を指定します。
+        peerConnectionContraints: {
+            optional: [
+                {DtlsSrtpKeyAgreement: true},
+                {RtpDataChannels: true}
+            ]
+        },
 	});
 
 
@@ -167,9 +181,78 @@ Event API
 --------------
 
 ### #on
+
+イベントを登録します。
+
+#### socketError
+
+サーバへの接続に失敗した時に呼ばれます。
+
+    meetup.on('socketError', function () {
+        console.log('obj', this);
+        // TODO
+    });
+
+
+#### speaking
+
+ユーザが喋った時に呼ばれます。
+
+    meetup.on('speaking', function (idObj) {
+        var sessionId = null;
+        if (idObj) {
+            sessionId = idObj.id;
+        } else {
+            // 自分以外ユーザがいない場合。
+        }
+
+        console.log('speaking', sessionId);
+    });
+
+
+#### stoppedSpeaking
+
+ユーザが喋り終わった時に呼ばれます。
+
+    meetup.on('stoppedSpeaking', function(event) {
+        // stopped
+    });
+
+
+#### peerStreamAdded
+
+ユーザが入室した時に呼ばれます。
+
+    meetup.on('peerStreamAdded', function(peer) {
+        console.log('Added peer:', peer);
+    });
+
+
+#### peerStreamRemoved
+
+ユーザが退室した時に呼ばれます。
+
+    meetup.on('peerStreamRemoved', function(peer) {
+        console.log('Removed peer:', peer);
+    });
+
+
+
+
+
 ### #off
 
+イベントを削除したいときに呼びます。
+イベント名を指定した場合は、複数登録しているイベントをすべて削除します。
+登録時の関数オブジェクトを指定した場合は、そのイベントのみを削除します。
 
+    meetup.off('peerStreamRemoved');
+
+    var func = function() {
+        // 登録後削除しているので呼ばれません。
+    };
+    meetup.on('peerStreamRemoved', func);
+    meetup.off(func);
 
 
 
