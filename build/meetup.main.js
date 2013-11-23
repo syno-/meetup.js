@@ -10,11 +10,18 @@
  *
  */
 Meetup = (function() {
+    var debug = false;
     var callbacks = [];
 
     function log() {
-        arguments.unshift('meetup.js :');
-        console.log.apply(this, arguments);
+        if (debug) {
+            var args = [];
+            args.push('meetup.js : ');
+            for (var i=0; i<arguments.length; i++) {
+                args.push(arguments[i]);
+            }
+            console.log.apply(console, args);
+        }
     }
 
     function createError(message) {
@@ -34,6 +41,22 @@ Meetup = (function() {
     }
 
     var meetup = function(config) {
+        // Init
+        var isLocal = (function() {
+            if (window.location.host.indexOf('192.168.') === 0 ||
+               window.location.host.indexOf('localhost') === 0) {
+                return true;
+            }
+            return false;
+        })();
+        var STUN_URL = isLocal ?
+            'stun:stun.l.google.com:19302' :
+            'stun:stun.synou.com';
+        var SERVER_URL = 'http://stun2.synou.com:8888';
+        SERVER_URL = isLocal ?
+            // 'http://192.168.31.6:8888' :
+            (config.url || SERVER_URL) :
+            SERVER_URL;
         this.readyCallback = null;
         this.addedPeerCallback = null;
         this.removedPeerCallback = null;
@@ -46,7 +69,20 @@ Meetup = (function() {
          *
          */
         this.members = [];
-        this.debug = !!config.debug;
+
+
+        // Configuration
+        debug = this.debug = !!config.debug;
+        config.peerConnectionConfig = {
+            iceServers: [{
+                "url": STUN_URL,
+            }]
+        };
+        config.url = SERVER_URL;
+        if (typeof config.detectSpeakingEvents === 'undefined') {
+            config.detectSpeakingEvents = true;
+        }
+
         this.webrtc = new SimpleWebRTC(config);
 
         var self = this;
@@ -58,25 +94,27 @@ Meetup = (function() {
         //    member.peer = peer;
         //});
         this.webrtc.on('peerStreamAdded', function(peer) {
-            console.log('peerStreamAdded', peer);
+            log('peerStreamAdded', peer);
             self.members.push({
                 peer: peer
             });
 
+            fire('peerStreamAdded', self, arguments);
             if (self.addedPeerCallback) self.addedPeerCallback.apply(self, arguments);
         });
         this.webrtc.on('peerStreamRemoved', function(peer) {
-            console.log('peerStreamRemoved', peer);
+            log('peerStreamRemoved', peer);
 
             self.members = self.members.filter(function(v) {
                 return v.peer.id != peer.id;
             });
 
+            fire('peerStreamRemoved', self, arguments);
             if (self.removedPeerCallback) self.removedPeerCallback.apply(self, arguments);
         });
         
         this.webrtc.on('localStream', function(evt) {
-            console.log('localStream');
+            log('localStream');
         });
 
         this.webrtc.on('*', function (event) {
@@ -92,10 +130,9 @@ Meetup = (function() {
             }
         });
 
-        var con = window.con = this.getConnection();
-        console.log('con', window.con);
+        var con = this.getConnection();
         con.socket.addListener('error', function(evt) {
-            //console.log('Error', evt, this);
+            log('socketError', evt, this);
             fire('socketError', this, arguments);
         });
     };
@@ -127,7 +164,7 @@ Meetup = (function() {
         this.organizationId = oid;
         var self = this;
         this.webrtc.on('connectionReady', function (sessionId) {
-            console.log('connectionReady', sessionId);
+            log('connectionReady', sessionId);
             self.myself.sessionId = sessionId;
 
             // TODO: ここでサービスへRIDを送ってログインする。
@@ -140,9 +177,7 @@ Meetup = (function() {
                         message: 'OrganizationId is empty.'
                     };
                 }
-                if (self.debug) {
-                    console.log('error', err);
-                }
+                log('error', err);
                 if (cb) cb(err);
             }, 500);
         });
@@ -243,7 +278,7 @@ Meetup = (function() {
         if (this.debug) {
             // TODO
             //log('');
-            console.log('stopScreenShare');
+            log('stopScreenShare');
         }
         this.webrtc.stopScreenShare();
         return this;
@@ -254,7 +289,13 @@ Meetup = (function() {
     // ----------------------------
 
     /**
-     *
+     * regist event
+     * 
+     * - socketError
+     * - speaking
+     * - stoppedSpeaking
+     * - peerStreamAdded
+     * - peerStreamRemoved
      */
     meetup.prototype.on = function(name, func) {
         if (name && func) {
@@ -264,7 +305,7 @@ Meetup = (function() {
             });
         } else {
             if (this.debug) {
-                console.log('event name or func is empty.', name, func);
+                log('event name or func is empty.', name, func);
             }
         }
         return this;
@@ -272,10 +313,6 @@ Meetup = (function() {
 
     /**
      * delete event
-     * 
-     * - socketError
-     * - speaking
-     * - toppedSpeaking
      */
     meetup.prototype.off = function(funcOrName) {
 		if (typeof funcOrName === 'string') {
@@ -292,6 +329,9 @@ Meetup = (function() {
         return this;
     };
 
+    /**
+     * @deprecated Use #on instead.
+     */
     meetup.prototype.speaking = function(cb) {
         var self = this;
         this.webrtc.on('speaking', function (event) {
@@ -301,6 +341,9 @@ Meetup = (function() {
         return this;
     };
 
+    /**
+     * @deprecated Use #on instead.
+     */
     meetup.prototype.stoppedSpeaking = function(cb) {
         var self = this;
         this.webrtc.on('stoppedSpeaking', function (event) {
@@ -310,11 +353,17 @@ Meetup = (function() {
         return this;
     };
 
+    /**
+     * @deprecated Use #on instead.
+     */
     meetup.prototype.addedPeer = function(cb) {
         this.addedPeerCallback = cb;
         return this;
     };
 
+    /**
+     * @deprecated Use #on instead.
+     */
     meetup.prototype.removedPeer = function(cb) {
         this.removedPeerCallback = cb;
         return this;

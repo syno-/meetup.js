@@ -54,27 +54,16 @@ $(function() {
         // immediately ask for camera access. default false
         //autoRequestMedia: true,
         debug: true,
-        peerConnectionConfig: {
-            iceServers: [{
-                "url": Settings.STUN_URL,
-                // STUN or TURN URL
-            }]
-        },
-        peerConnectionContraints: {
-            optional: [{
-                DtlsSrtpKeyAgreement: true
-            }, {
-                RtpDataChannels: true
-            }]
-        },
-        autoAdjustMic: false,
-        media: {
-            audio: true,
-            video: true
-        },
-        detectSpeakingEvents: true,
-        enableDataChannels: true,
-        url: Settings.SERVER_URL
+        url: '192.168.31.8:8888' // debug server
+        //peerConnectionContraints: {
+        //    optional: [{
+        //        DtlsSrtpKeyAgreement: true
+        //    }, {
+        //        RtpDataChannels: true
+        //    }]
+        //},
+        //autoAdjustMic: false,
+        //enableDataChannels: true,
     
         // adjustPeerVolume: true,
         // peerVolumeWhenSpeaking: 0.25
@@ -94,6 +83,13 @@ $(function() {
 
         stateEl.text('カメラとマイクの許可をしてください。');
         meetup.ready(function(err, sessionId) {
+            if (err) {
+                var msg = 'カメラとマイクへのアクセスが許可されていません。\n許可した後、リロードしてください。';
+                stateEl.text(msg);
+        
+                console.log('deniedTime=', Date.now() - startTime);
+                return;
+            }
             console.log('ready, sessionId=', sessionId);
             //$('#alert-permit').remove();
             $('#waiting').remove();
@@ -101,7 +97,6 @@ $(function() {
         
             // ready
             this.joinRoom(Settings.RID, function(err, roomDescription) {
-                console.log('joinRoom', err);
                 if (err) {
                     alert(err.message);
                     this.stopLocalVideo();
@@ -119,11 +114,6 @@ $(function() {
             }).removedPeer(function(peer) {
                 refreshList(this.members);
             });
-        }).denied(function(event) {
-            var msg = 'カメラとマイクへのアクセスが許可されていません。\n許可した後、リロードしてください。';
-            stateEl.text(msg);
-        
-            console.log('deniedTime=', Date.now() - startTime);
         });
     });
     
