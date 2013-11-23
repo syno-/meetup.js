@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Simple meetup.js</title>
+
+        <script type="text/javascript" src="/js/simplewebrtc.bundle.js"></script>
+        <script type="text/javascript" src="/js/socket.io.js"></script>
+        <script type="text/javascript" src="/js/meetup.js"></script>
+        <script>
+            var meetup = Meetup.create({
+                remoteVideosEl: 'remoteVideos',
+                localVideoEl: 'localVideo',
+            }).login('<Organization ID>', function(err) {
+                if (err) return;
+
+                meetup.ready(function(err, sessionId) {
+                    if (err) {
+                        console.log('Access denied to Camera and Mic');
+                        return;
+                    }
+                    meetup.joinRoom('<RoomID>', function(err, roomDescription) {
+                        if (err) return;
+
+                        console.log('Joined room!');
+                    });
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="remoteVideos"></div>
+        <div id="localVideo"></div>
+    </body>
+</html>
+
+
