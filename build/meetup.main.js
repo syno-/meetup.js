@@ -121,11 +121,13 @@ Meetup = (function() {
             if (event.name === 'PermissionDeniedError' || // for Chrome >=33
                 event.name === 'PERMISSION_DENIED' // for Chrome <=30
                ) {
+                log('ready', event.name);
                 if (self.readyCallback) self.readyCallback.call(this, createError('Permission Denied.'), event);
             } else if (
                 event.name === 'NavigatorUserMediaError' ||
                 event.name === 'NOT_SUPPORTED_ERROR'
                ) {
+                //log('ready', event.name);
                    // TODO: Not supported on this browser.
             }
         });
@@ -203,6 +205,7 @@ Meetup = (function() {
         }
         var self = this;
         this.webrtc.joinRoom(roomId, function(err, roomDescription) {
+            log('joinRoom', err, roomDescription);
             if (cb) cb.call(self, err, roomDescription);
         });
         return this;
@@ -275,11 +278,6 @@ Meetup = (function() {
     };
 
     meetup.prototype.stopScreenShare = function(cb) {
-        if (this.debug) {
-            // TODO
-            //log('');
-            log('stopScreenShare');
-        }
         this.webrtc.stopScreenShare();
         return this;
     };
@@ -304,9 +302,7 @@ Meetup = (function() {
                 func: func,
             });
         } else {
-            if (this.debug) {
-                log('event name or func is empty.', name, func);
-            }
+            log('event name or func is empty.', name, func);
         }
         return this;
     };
@@ -315,6 +311,7 @@ Meetup = (function() {
      * delete event
      */
     meetup.prototype.off = function(funcOrName) {
+        log('off', funcOrName);
 		if (typeof funcOrName === 'string') {
 			var name = funcOrName;
 			callbacks = callbacks.filter(function(a, b) {
