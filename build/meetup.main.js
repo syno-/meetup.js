@@ -156,6 +156,15 @@ Meetup = (function() {
         return this;
     };
 
+    meetup.prototype.leaveRoom = function(cb) {
+        var self = this;
+        this.webrtc.on('leftRoom', function (event) {
+            if (cb) cb.call(self, event);
+        });
+        this.webrtc.leaveRoom();
+        return this;
+    };
+
     meetup.prototype.mute = function(cb) {
         var self = this;
         this.webrtc.on('audioOff', function (event) {
@@ -168,15 +177,16 @@ Meetup = (function() {
     meetup.prototype.unmute = function(cb) {
         var self = this;
         this.webrtc.on('audioOn', function (event) {
-            if (cb) cb.call(this, event);
+            if (cb) cb.call(self, event);
         });
         this.webrtc.unmute();
         return this;
     };
 
     meetup.prototype.pause = function(cb) {
+        var self = this;
         this.webrtc.on('videoOff', function (event) {
-            if (cb) cb.call(this, event);
+            if (cb) cb.call(self, event);
         });
         this.webrtc.pause();
         return this;
