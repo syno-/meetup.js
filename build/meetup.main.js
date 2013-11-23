@@ -274,7 +274,8 @@ Meetup = (function() {
      * delete event
      * 
      * - socketError
-     * - 
+     * - speaking
+     * - toppedSpeaking
      */
     meetup.prototype.off = function(funcOrName) {
 		if (typeof funcOrName === 'string') {
@@ -294,6 +295,7 @@ Meetup = (function() {
     meetup.prototype.speaking = function(cb) {
         var self = this;
         this.webrtc.on('speaking', function (event) {
+            fire('speaking', this, arguments);
             if (cb) cb.call(self, event);
         });
         return this;
@@ -302,6 +304,7 @@ Meetup = (function() {
     meetup.prototype.stoppedSpeaking = function(cb) {
         var self = this;
         this.webrtc.on('stoppedSpeaking', function (event) {
+            fire('stoppedSpeaking', this, arguments);
             if (cb) cb.call(self, event);
         });
         return this;
