@@ -54,6 +54,7 @@ $(function() {
         // immediately ask for camera access. default false
         //autoRequestMedia: true,
         debug: true,
+        //coreDebug: true,
         url: '192.168.31.8:8888' // debug server
         //peerConnectionContraints: {
         //    optional: [{
@@ -102,16 +103,16 @@ $(function() {
                     this.stopLocalVideo();
                     return;
                 }
-            }).speaking(function(event) {
+            }).on('speaking', function(event) {
                 $('#localVideo').addClass('speaking');
-            }).stoppedSpeaking(function(event) {
+            }).on('stoppedSpeaking', function(event) {
                 $('#localVideo').removeClass('speaking');
-            }).addedPeer(function(peer) {
+            }).on('peerStreamAdded', function(peer) {
                 Meetup.notify({
                     title: peer.id + 'が会議に参加しました。'
                 }).show();
                 refreshList(this.members);
-            }).removedPeer(function(peer) {
+            }).on('peerStreamRemoved', function(peer) {
                 refreshList(this.members);
             });
         });

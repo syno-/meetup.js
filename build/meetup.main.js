@@ -82,6 +82,7 @@ Meetup = (function() {
         if (typeof config.detectSpeakingEvents === 'undefined') {
             config.detectSpeakingEvents = true;
         }
+        config.debug = !!config.coreDebug || false;
 
         this.webrtc = new SimpleWebRTC(config);
 
@@ -112,9 +113,17 @@ Meetup = (function() {
             fire('peerStreamRemoved', self, arguments);
             if (self.removedPeerCallback) self.removedPeerCallback.apply(self, arguments);
         });
+        this.webrtc.on('speaking', function (idObj) {
+            log('speaking', idObj);
+            fire('speaking', self, arguments);
+        });
+        this.webrtc.on('stoppedSpeaking', function (idObj) {
+            log('stoppedSpeaking', idObj);
+            fire('stoppedSpeaking', self, arguments);
+        });
         
         this.webrtc.on('localStream', function(evt) {
-            log('localStream');
+            log('localStream', evt);
         });
 
         this.webrtc.on('*', function (event) {
@@ -127,7 +136,7 @@ Meetup = (function() {
                 event.name === 'NavigatorUserMediaError' ||
                 event.name === 'NOT_SUPPORTED_ERROR'
                ) {
-                //log('ready', event.name);
+                log('TODO: ', event.name);
                    // TODO: Not supported on this browser.
             }
         });
@@ -165,6 +174,7 @@ Meetup = (function() {
     meetup.prototype.login = function(oid, cb) {
         this.organizationId = oid;
         var self = this;
+        // TODO: ここでconnectionReadyすると、遅延でloginした時危険？
         this.webrtc.on('connectionReady', function (sessionId) {
             log('connectionReady', sessionId);
             self.myself.sessionId = sessionId;
@@ -175,11 +185,9 @@ Meetup = (function() {
                 var err = null;
                 if (!oid) {
                     // RIDないぜ
-                    err = {
-                        message: 'OrganizationId is empty.'
-                    };
+                    err = createError('OrganizationId is empty.');
                 }
-                log('error', err);
+                log('login, err=', err);
                 if (cb) cb(err);
             }, 500);
         });
@@ -193,6 +201,7 @@ Meetup = (function() {
         this.startLocalVideo();
         var self = this;
         this.webrtc.on('readyToCall', function (event) {
+            log('ready, noerror');
             if (cb) cb.call(self, null, event);
         });
         return this;
@@ -332,7 +341,6 @@ Meetup = (function() {
     meetup.prototype.speaking = function(cb) {
         var self = this;
         this.webrtc.on('speaking', function (event) {
-            fire('speaking', this, arguments);
             if (cb) cb.call(self, event);
         });
         return this;
@@ -344,7 +352,6 @@ Meetup = (function() {
     meetup.prototype.stoppedSpeaking = function(cb) {
         var self = this;
         this.webrtc.on('stoppedSpeaking', function (event) {
-            fire('stoppedSpeaking', this, arguments);
             if (cb) cb.call(self, event);
         });
         return this;
