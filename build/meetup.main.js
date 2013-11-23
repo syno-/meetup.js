@@ -15,8 +15,16 @@ Meetup = (function() {
         console.log.apply(this, arguments);
     }
 
+    function createError(message) {
+        var err = {
+            message: message
+        };
+
+        return err;
+    }
+
     var meetup = function(config) {
-        this.deniedCallback = null;
+        this.readyCallback = null;
         this.addedPeerCallback = null;
         this.removedPeerCallback = null;
         this.myself = {};
@@ -65,7 +73,7 @@ Meetup = (function() {
             if (event.name === 'PermissionDeniedError' || // for Chrome >=33
                 event.name === 'PERMISSION_DENIED' // for Chrome <=30
                ) {
-                if (self.deniedCallback) self.deniedCallback(event);
+                if (self.readyCallback) self.readyCallback.call(this, createError('Permission Denied.'), event);
             } else if (
                 event.name === 'NavigatorUserMediaError' ||
                 event.name === 'NOT_SUPPORTED_ERROR'
@@ -125,20 +133,12 @@ Meetup = (function() {
         return this;
     };
 
-    function createError(message) {
-        var err = {
-            message: message
-        };
-
-        return err;
-    }
-
     // we have to wait until it's ready
     meetup.prototype.ready = function(cb) {
+        this.readyCallback = cb;
         this.startLocalVideo();
         var self = this;
         this.webrtc.on('readyToCall', function (event) {
-            // TODO: err is always null. (Not Implemented)
             if (cb) cb.call(self, null, event);
         });
         return this;
@@ -249,11 +249,6 @@ Meetup = (function() {
 
     meetup.prototype.removedPeer = function(cb) {
         this.removedPeerCallback = cb;
-        return this;
-    };
-
-    meetup.prototype.denied = function(cb) {
-        this.deniedCallback = cb;
         return this;
     };
 
