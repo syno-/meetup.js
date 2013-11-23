@@ -281,15 +281,63 @@ Video Control API
 引数 :
 
 * Callback
-    * ミュートの解除がサーバに伝わった後に実行されます。
+    * 処理のイベントがサーバに伝わった後に実行されます。
     * function() { ... }
 
 
 
 ### #pause
+
+自分の動画を一時配信停止します。
+
+	meetup.resume([Callback]);
+
+引数 :
+
+* Callback
+    * 処理のイベントがサーバに伝わった後に実行されます。
+    * function() { ... }
+
+
 ### #resume
+
+自分の動画を一時配信停止します。
+
+	meetup.resume([Callback]);
+
+引数 :
+
+* Callback
+    * 処理のイベントがサーバに伝わった後に実行されます。
+    * function() { ... }
+
+
 ### #stopLocalVideo 
+
+自分の動画を停止すると共に、カメラとマイクのりようを停止します。
+
+	meetup.stopLocalVideo([Callback]);
+
+引数 :
+
+* Callback
+    * 処理のイベントがサーバに伝わった後に実行されます。
+    * function() { ... }
+
+
 ### #startLocalVideo 
+
+カメラとマイクの利用を開始し、同時に動画の配信を開始します。
+
+	meetup.startLocalVideo([Callback]);
+
+引数 :
+
+* Callback
+    * 処理のイベントがサーバに伝わった後に実行されます。
+    * function() { ... }
+
+
 ### #shareScreen 
 ### #stopShareScreen 
 
