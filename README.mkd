@@ -8,25 +8,24 @@ meetup.js
 これは複数人でテレビ会議をするためのSDKです。
 
 
-How to build
---------------
 
-### Clone project
+セットアップ
+--------------
 
 	$ git clone --recursive git@bitbucket.org:esperia/meetup.js.git
 	$ cd meetup.js
-
-### Install npm submodules
-
 	$ npm i
+	$ node server
 
-### Build
+	Start Server: http://localhost:8080
 
-	$ grunt default
+Please Access :
+	
+    http://localhost:8080
 
 
 
-使い方
+シンプルな例
 --------------
 
 - サービスにてOrganization IDを取得します。
@@ -44,10 +43,13 @@ HTML :
             <script type="text/javascript" src="/js/socket.io.js"></script>
             <script type="text/javascript" src="/js/meetup.js"></script>
             <script>
+				var organizationId = '<Organization ID>';
+				var roomId = '<Room ID>';
+
                 var meetup = Meetup.create({
                     remoteVideosEl: 'remoteVideos',
                     localVideoEl: 'localVideo',
-                }).login('<Organization ID>', function(err) {
+                }).login(organizationId, function(err) {
                     if (err) return;
     
                     meetup.ready(function(err, sessionId) {
@@ -55,7 +57,7 @@ HTML :
                             console.log('Access denied to Camera and Mic');
                             return;
                         }
-                        meetup.joinRoom('<RoomID>', function(err, roomDescription) {
+                        meetup.joinRoom(roomId, function(err, roomDescription) {
                             if (err) return;
     
                             console.log('Joined room!');
@@ -72,16 +74,216 @@ HTML :
 
 
 
+ルーム管理API
+--------------
+
+
+### #create
+
+Meetup.js オブジェクトを作成・初期化します。
+
+
+    var meetup = Meetup.create({
+		// 会話する相手のビデオの一覧が入る要素のIDです。
+        remoteVideosEl: 'remoteVideos',
+
+		// 会話する相手のビデオの一覧が入る要素のIDです。
+        localVideoEl: 'localVideo',
+	});
+
+
+
+### #login
+
+企業IDを利用してサービスへログインします。
+
+	meetup.login(<Organization ID>, <Callback>);
+
+引数 :
+
+* Organization ID
+   * サービスに登録した時に割り振られたIDを指定します。
+* Callback
+   * サービスへのログイン処理を行った後に実行されるメソッドを指定します。
+   * function(err) { ... }
+      * err
+         * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
+
+
+
+### #ready
+
+サーバへ接続します。
+また、ユーザへカメラとマイクへのアクセスを要求します。
+
+	meetup.ready([<Callback>]);
+
+引数 :
+
+* Callback
+   * サーバへの接続と、ユーザへのカメラ/マイクへのアクセスを要求します。
+   * function(err, sessionId) { ... }
+      * err
+         * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
+      * sessionId
+         * 現在接続しているサーバで固有に割り振られたIDです。自分のチャットルームへのアクセスになります。
+
+
+
+### #joinRoom
+
+指定の会議室へ入室します。
+
+	meetup.joinRoom(<Room ID>[, <Callback>]);
+
+引数 :
+
+* Room ID
+   * ルームIDを指定します。
+* Callback
+   * ルームへ入室処理が終わった際に実行されます。
+   * function(err,  roomDescription) { ... }
+      * err
+         * 処理に成功した場合はnull, 失敗した場合はエラーオブジェクトが返ります。
+      * roomDescription
+         * 部屋の情報が表示されます。
+
+
+
+### #leaveRoom
+
+指定の会議室から退室します。
+
+	meetup.leaveRoom([<Callback>]);
+
+引数 :
+* Callback
+   * ルームへ入室処理が終わった際に実行されます。
+   * function() { ... }
+
+
+
+Event API
+--------------
+
+### #on
+### #off
+
+
+
+
+
+Video Control API
+--------------
+
+### #mute
+
+自分の音声をミュートにします。
+
+	meetup.mute([Callback]);
+
+引数 :
+
+* Callback
+   * ミュートがサーバに伝わった後に実行されます。
+   * function() { ... }
+
+
+### #unmute
+
+自分の音声のミュートを解除します。
+
+	meetup.unmute([Callback]);
+
+引数 :
+
+* Callback
+   * ミュートの解除がサーバに伝わった後に実行されます。
+   * function() { ... }
+
+
+
+### #pause
+### #resume
+### #stopLocalVideo 
+### #startLocalVideo 
+### #shareScreen 
+### #stopShareScreen 
+
+
+
+Getter API
+--------------
+
+### #get
+
+内部で利用している SimpleWebRTC オブジェクトを取得します。
+
+	var simpleWebRTC = meetup.get();
+
+
+### #getConnection
+
+内部で利用している Socket.IO オブジェクトを取得します。
+
+	var socketio = meetup.getConnection();
+
+
+
+エラーオブジェクトについて
+--------------
+
+#login APIなどにアクセスした際に、コールバック関数の第一引数に渡されるerrオブジェクトは、以下の形式になっています。
+
+	err = {
+		message: 'エラーメッセージ'
+	}
+
+
+
+How to build (Develop)
+--------------
+
+### Bild require
+
+* Git
+* ruby
+   * Ruby Gems
+      * sass
+* Node.js
+   * Grunt
+
+### Clone project
+
+	$ git clone --recursive git@bitbucket.org:esperia/meetup.js.git
+	$ cd meetup.js
+
+### Install Node.js
+
+	$ 
+
+### Install npm submodules
+
+	$ npm i
+
+### Build
+
+	$ grunt default
+
+
+
 動作ブラウザ
 --------------
+
 - Firefox (latest)
 - Google Chrome (latest)
+
 
 
 License
 --------------
 
-MIT
+MIT License
 
 
 
