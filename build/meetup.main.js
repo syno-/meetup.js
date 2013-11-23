@@ -257,16 +257,18 @@ Meetup = (function() {
     };
 
     meetup.prototype.resume = function(cb) {
+        var self = this;
         this.webrtc.on('videoOn', function (event) {
-            if (cb) cb.call(this, event);
+            if (cb) cb.call(self, event);
         });
         this.webrtc.resume();
         return this;
     };
 
     meetup.prototype.stopLocalVideo = function(cb) {
+        var self = this;
         this.webrtc.on('localStreamStopped', function (event) {
-            if (cb) cb.call(this, event);
+            if (cb) cb.call(self, event);
         });
         this.webrtc.stopLocalVideo();
         return this;
@@ -280,8 +282,9 @@ Meetup = (function() {
     };
 
     meetup.prototype.shareScreen = function(cb) {
+        var self = this;
         this.webrtc.shareScreen(function() {
-            if (cb) cb.apply(this, arguments);
+            if (cb) cb.apply(self, arguments);
         });
         return this;
     };
