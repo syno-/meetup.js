@@ -17,25 +17,15 @@ var Queries = (function() {
     }
     return result;
 })();
-console.log(Queries);
 var Settings = {
-    isLocal: (function() {
-        if (window.location.host.indexOf('192.168.') === 0) {
-            return true;
-        }
-        return false;
-    })(),
     OID: Queries.OID || null,
     RID: Queries.RID || null,
 };
-Settings.STUN_URL = Settings.isLocal ?
-    'stun:stun.l.google.com:19302' :
-    'stun:stun.synou.com';
-Settings.SERVER_URL = Settings.isLocal ?
-//    'http://192.168.31.6:8888' :
-    'http://192.168.24.74:8888' :
-    'http://stun2.synou.com:8888';
-console.log('Settings', Settings);
+console.log('Settings', Settings, 'Queries', Queries);
+
+// ----------------------------
+// Implements
+// ----------------------------
 
 $(function() {
     var startTime = Date.now(); // TEST
@@ -47,22 +37,19 @@ $(function() {
     var stateEl = $('#state').empty().text('通話サービスへ接続しています…。');
 
     var meetup = Meetup.create({
-        // the id/element dom element that will hold "our" video
         localVideoEl: 'localVideo',
-        // the id/element dom element that will hold remote videos
         remoteVideosEl: 'remoteVideos',
-        // immediately ask for camera access. default false
         //autoRequestMedia: true,
         debug: true,
         //coreDebug: true,
         url: '192.168.31.8:8888' // debug server
-        //peerConnectionContraints: {
-        //    optional: [{
-        //        DtlsSrtpKeyAgreement: true
-        //    }, {
-        //        RtpDataChannels: true
-        //    }]
-        //},
+        peerConnectionContraints: {
+            optional: [{
+                DtlsSrtpKeyAgreement: true
+            }, {
+                RtpDataChannels: true
+            }]
+        },
         //autoAdjustMic: false,
         //enableDataChannels: true,
     

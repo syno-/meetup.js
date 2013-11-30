@@ -17,12 +17,6 @@ meetup.js
 	$ npm i
 	$ node server
 
-	Start Server: http://localhost:8080
-
-Please Access :
-	
-    http://localhost:8080
-
 
 
 シンプルな例

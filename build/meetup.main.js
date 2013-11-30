@@ -54,7 +54,6 @@ Meetup = (function() {
             'stun:stun.synou.com';
         var SERVER_URL = 'http://stun2.synou.com:8888';
         SERVER_URL = isLocal ?
-            // 'http://192.168.31.6:8888' :
             (config.url || SERVER_URL) :
             SERVER_URL;
         this.readyCallback = null;
