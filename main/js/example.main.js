@@ -103,6 +103,12 @@ $(function() {
                 refreshList(this.members);
             });
         });
+    }).on('socketError', function(evt, socket) {
+        console.log('socket obj', socket);
+        if (!socket.connected) {
+            var msg = 'サーバへの接続に失敗しました。';
+            stateEl.text(msg);
+        }
     });
     
     function refreshList(members) {

@@ -186,9 +186,11 @@ Event API
 
 サーバへの接続に失敗した時に呼ばれます。
 
-    meetup.on('socketError', function () {
-        console.log('obj', this);
-        // TODO
+    meetup.on('socketError', function (evt, socket) {
+        console.log('socket obj', socket);
+        if (!socket.connected) {
+        	// サーバ接続エラー
+        }
     });
 
 

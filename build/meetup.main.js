@@ -146,7 +146,7 @@ Meetup = (function() {
         var con = this.getConnection();
         con.socket.addListener('error', function(evt) {
             log('socketError', evt, this);
-            fire('socketError', this, arguments);
+            fire('socketError', self, [evt, this]);
         });
     };
 
