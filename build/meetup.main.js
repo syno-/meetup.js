@@ -24,10 +24,13 @@ Meetup = (function() {
         }
     }
 
-    function createError(message) {
+    function createError(code, message) {
         var err = {
-            message: message
+            code: code,
         };
+        if (message) {
+            err.message = message;
+        }
 
         return err;
     }
@@ -130,7 +133,7 @@ Meetup = (function() {
                 event.name === 'PERMISSION_DENIED' // for Chrome <=30
                ) {
                 log('ready', event.name);
-                if (self.readyCallback) self.readyCallback.call(this, createError('Permission Denied.'), event);
+                if (self.readyCallback) self.readyCallback.call(this, createError(0, 'Permission Denied.'), event);
             } else if (
                 event.name === 'NavigatorUserMediaError' ||
                 event.name === 'NOT_SUPPORTED_ERROR'
@@ -184,7 +187,7 @@ Meetup = (function() {
                 var err = null;
                 if (!oid) {
                     // RIDないぜ
-                    err = createError('OrganizationId is empty.');
+                    err = createError(0, 'OrganizationId is empty.');
                 }
                 log('login, err=', err);
                 if (cb) cb(err);
@@ -208,7 +211,7 @@ Meetup = (function() {
 
     meetup.prototype.joinRoom = function(roomId, cb) {
         if (!roomId || typeof roomId !== 'string') {
-            if (cb) cb.call(self, createError('roomId is MUST be not empty.'), null);
+            if (cb) cb.call(self, createError(0, 'roomId is MUST be not empty.'), null);
             return this;
         }
         var self = this;
