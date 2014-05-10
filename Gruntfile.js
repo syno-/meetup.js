@@ -74,14 +74,6 @@ module.exports = function(grunt) {
                 files: {
                     './main/css/main.css': buildPath + 'main.scss',
                 }
-            },
-            release: {
-                options: {
-                    style: 'expanded',
-                },
-                files: {
-                    './release/css/main.css': buildPath + 'main.scss',
-                }
             }
         },
     });
@@ -103,6 +95,6 @@ module.exports = function(grunt) {
                        'jshint',
                        'concat:release',
                        'uglify:release',
-                       'sass:release',
+                       'sass:debug',
     ]);
 };
