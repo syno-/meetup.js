@@ -2,7 +2,6 @@ module.exports = function(grunt) {
     "use strict";
 
     var buildPath = 'build/';
-    var releasePath = 'main/js/';
     var builds = [
         buildPath + 'meetup.boot.js',
         buildPath + 'meetup.main.js',
@@ -10,16 +9,13 @@ module.exports = function(grunt) {
         buildPath + 'meetup.finish.js',
         //buildPath + 'example.main.js',
     ];
-    var debugBuilds = [
-        buildPath + 'example.main.js',
-    ];
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         uglify: {
 //            build: {
 //                src: buildPath + '<%= pkg.name %>.js',
-//                dest: releasePath + '<%= pkg.name %>.min.js'
+//                dest: 'main/js/<%= pkg.name %>.min.js'
 //            },
             debug: {
                 options: {
@@ -28,9 +24,18 @@ module.exports = function(grunt) {
                     compress: false,
                 },
                 files: {
-                    'main/js/meetup.min.js': builds
+                    'main/js/meetup.min.js': builds,
                 }
-            }
+            },
+            release: {
+                options: {
+                    beautify: false,
+                    compress: true,
+                },
+                files: {
+                    'release/js/meetup.min.js': builds,
+                }
+            },
         },
         jshint: {
             all: ['Gruntfile.js', buildPath + '**/*.js']
@@ -39,9 +44,13 @@ module.exports = function(grunt) {
             options: {
                 separator: ';',
             },
-            dist: {
+            debug: {
                 src: builds,
-                dest: releasePath + 'meetup.js',
+                dest: 'main/js/meetup.js',
+            },
+            release: {
+                src: builds,
+                dest: 'release/js/meetup.js',
             },
         },
         watch: {
@@ -58,21 +67,24 @@ module.exports = function(grunt) {
             },
         },
         sass: {
-            dist: {
+            debug: {
                 options: {
                     style: 'expanded',
                 },
                 files: {
                     './main/css/main.css': buildPath + 'main.scss',
                 }
+            },
+            release: {
+                options: {
+                    style: 'expanded',
+                },
+                files: {
+                    './release/css/main.css': buildPath + 'main.scss',
+                }
             }
         },
     });
-//    grunt.registerTask('ready', 'build ready task.', function(type) {
-//        if (type === 'example') {
-//        } else if (type === 'release') {
-//        }
-//    });
 
     // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -84,13 +96,13 @@ module.exports = function(grunt) {
     // Default task(s).
     grunt.registerTask('default', [
                        'jshint',
-                       'concat',
-                       'sass',
+                       'concat:debug',
+                       'sass:debug',
     ]);
     grunt.registerTask('release', [
                        'jshint',
-                       'concat',
-                       'uglify',
-                       'sass',
+                       'concat:release',
+                       'uglify:release',
+                       'sass:release',
     ]);
 };

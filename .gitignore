@@ -22,3 +22,9 @@ main/css/*
 
 main/room_files/*
 
+##############
+# release ignores
+##############
+
+release
+
