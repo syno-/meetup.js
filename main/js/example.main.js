@@ -42,7 +42,7 @@ $(function() {
         //autoRequestMedia: true,
         debug: true,
         //coreDebug: true,
-        url: '192.168.31.8:8888' // debug server
+        //url: '192.168.31.8:8888' // debug server
         peerConnectionContraints: {
             optional: [{
                 DtlsSrtpKeyAgreement: true
