@@ -33,7 +33,7 @@ module.exports = function(grunt) {
                     compress: true,
                 },
                 files: {
-                    'release/js/meetup.min.js': builds,
+                    'release/meetup.min.js': builds,
                 }
             },
         },
@@ -50,7 +50,7 @@ module.exports = function(grunt) {
             },
             release: {
                 src: builds,
-                dest: 'release/js/meetup.js',
+                dest: 'release/meetup.js',
             },
         },
         watch: {
@@ -76,6 +76,16 @@ module.exports = function(grunt) {
                 }
             }
         },
+        copy: {
+            SimpleWebRTC: {
+                files: [{
+                    expand: true,
+                    flatten: true,
+                    src: ['SimpleWebRTC/simplewebrtc.bundle.js'],
+                    dest: 'release/'
+                }]
+            }
+        }
     });
 
     // Load the plugin that provides the "uglify" task.
@@ -84,6 +94,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-sass');
     grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     // Default task(s).
     grunt.registerTask('default', [
@@ -95,6 +106,7 @@ module.exports = function(grunt) {
                        'jshint',
                        'concat:release',
                        'uglify:release',
+                       'copy:SimpleWebRTC',
                        'sass:debug',
     ]);
 };
